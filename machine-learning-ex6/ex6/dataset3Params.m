@@ -22,22 +22,25 @@ sigma = 1;
 %  Note: You can compute the prediction error using 
 %        mean(double(predictions ~= yval))
 %
-accuracy = 0;
-steps = [0.01;0.03;0.1;0.3;1;3;10;30]
-for c = 1:size(steps,1)
-  for sig = 1: size(steps,1)
-    model= svmTrain(X, y, steps(c,1), @(x1, x2) gaussianKernel(x1, x2, steps(sig,1)));
-    prediction = svmPredict(model, Xval);
-    ai = mean(double(prediction ~= yval));
-    fprintf("sigma= %d, C= %d, accuracy= %d \n", steps(sig,1), steps(c,1), ai);
-    if ai > accuracy
-      accuracy = ai;
-      C = steps(c,1);
-      sigma = steps(sig,1);
-    end 
-  end
+
+
+results = eye(64,3);
+ei = 0;
+
+for c = [0.01 0.03 0.1 0.3 1, 3, 10 30]
+    for sig = [0.01 0.03 0.1 0.3 1, 3, 10 30]
+        ei = ei + 1;
+        model = svmTrain(X, y, c, @(x1, x2) gaussianKernel(x1, x2, sig));
+        predictions = svmPredict(model, Xval);
+        error = mean(double(predictions ~= yval));
+        results(ei,:) = [c, sig, error];     
+    end
 end
 
+sorted = sortrows(results, 3); % sort matrix by column #3, the error, ascending
+
+C = sorted(1,1);
+sigma = sorted(1,2);
 % =========================================================================
 
 end
