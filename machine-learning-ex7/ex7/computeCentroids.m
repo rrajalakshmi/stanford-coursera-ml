@@ -30,7 +30,7 @@ for ci = 1:K
   gp = find(idx == ci);
   grpPoints = X(gp(:,:),:);  
   #Sum along the rows and divide by number of points in cluster.
-  centroids(ci,:) = sum(grpPoints,1)./ size(gp,1)
+  centroids(ci,:) = sum(grpPoints,1) ./ size(gp,1);
 end
 
 
